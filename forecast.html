@@ -1,0 +1,100 @@
+<!-- forecast -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather Forecast</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+            }
+
+            th,
+            td {
+                padding: 8px;
+                text-align: left;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Weather Forecast</h1>
+        <label for="city">Enter City Name: </label>
+        <input type="text" id="city" placeholder="Enter City Name">
+        <button onclick="getForecastData()">Get Forecast</button>
+
+        <table id="forecast-table" style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temperature (°C)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Weather forecast rows will be inserted here -->
+            </tbody>
+        </table>
+
+        <script>
+            async function getForecastData() {
+                const city = document.getElementById('city').value;
+                const apiKey = 'YOUR_API_KEY'; // Replace with your actual OpenWeatherMap API key
+                const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+                try {
+                    // Fetch weather forecast data from OpenWeatherMap API
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error('City not found or error fetching data.');
+                    }
+
+                    const data = await response.json(); // Parse the JSON response
+
+                    // Get the table body element
+                    const tableBody = document.querySelector('#forecast-table tbody');
+
+                    // Clear previous data
+                    tableBody.innerHTML = '';
+
+                    // Loop through the forecast data and create table rows
+                    data.list.forEach(item => {
+                        // Extract the date and temperature
+                        const date = new Date(item.dt * 1000).toLocaleDateString(); // Convert UNIX timestamp to date
+                        const temperature = item.main.temp; // Temperature in Celsius
+
+                        // Create a new table row
+                        const row = document.createElement('tr');
+
+                        // Create and append the date cell
+                        const cellDate = document.createElement('td');
+                        cellDate.textContent = date;
+                        row.appendChild(cellDate);
+
+                        // Create and append the temperature cell
+                        const cellTemp = document.createElement('td');
+                        cellTemp.textContent = temperature;
+                        row.appendChild(cellTemp);
+
+                        // Append the row to the table body
+                        tableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error fetching forecast data:', error);
+                    alert('Error fetching forecast data. Please check the city name or try again.');
+                }
+            }
+        </script>
+    </body>
+
+</html>

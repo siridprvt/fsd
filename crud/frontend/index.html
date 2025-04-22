@@ -1,0 +1,88 @@
+<!-- frontend crud -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>MongoDB Users CRUD with Axios</title>
+    </head>
+
+    <body>
+        <h1>User Management (Axios)</h1>
+
+        <h2>Add User</h2>
+        <input type="text" id="name" placeholder="Name">
+        <input type="number" id="age" placeholder="Age">
+        <input type="email" id="email" placeholder="Email">
+        <button onclick="addUser()">Add</button>
+
+        <h2>Users</h2>
+        <ul id="userList"></ul>
+
+        <!-- Axios CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script>
+            const api = 'http://localhost:3000/users';
+
+            async function fetchUsers() {
+                try {
+                    const res = await axios.get(api);
+                    const users = res.data;
+                    const list = document.getElementById('userList');
+                    list.innerHTML = '';
+                    users.forEach(user => {
+                        const item = document.createElement('li');
+                        item.innerHTML = `
+            ${user.name} (${user.age}) - ${user.email}
+            <button onclick="deleteUser('${user._id}')">Delete</button>
+            <button onclick="updateUser('${user._id}')">Update Age</button>
+          `;
+                        list.appendChild(item);
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            async function addUser() {
+                const name = document.getElementById('name').value;
+                const age = parseInt(document.getElementById('age').value);
+                const email = document.getElementById('email').value;
+
+                try {
+                    await axios.post(api, { name, age, email });
+                    fetchUsers();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            async function deleteUser(id) {
+                try {
+                    await axios.delete(`${api} / ${id}`);
+                    fetchUsers();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            async function updateUser(id) {
+                const newAge = prompt("Enter new age:");
+                if (newAge) {
+                    try {
+                        await axios.put(`${api} / ${id}, { age: parseInt(newAge) }`);
+                        fetchUsers();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            }
+
+            fetchUsers();
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </body>
+
+</html>

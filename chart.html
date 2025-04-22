@@ -1,0 +1,80 @@
+<!-- chart -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather Forecast with Bar Chart</title>
+        <style>
+            #temperatureChart {
+                margin-top: 30px;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+        <h1>Weather Forecast</h1>
+        <label for="city">Enter City Name: </label>
+        <input type="text" id="city" placeholder="Enter City Name">
+        <button onclick="getForecastData()">Get Forecast</button>
+
+        <!-- Canvas for Chart.js -->
+        <canvas id="temperatureChart" width="400" height="200"></canvas>
+
+        <script>
+            async function getForecastData() {
+                const city = document.getElementById('city').value;
+                const apiKey = 'YOUR_API_KEY'; // Replace with your actual OpenWeatherMap API key
+                const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+                try {
+                    // Fetch weather forecast data from OpenWeatherMap API
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error('City not found or error fetching data.');
+                    }
+
+                    const data = await response.json(); // Parse the JSON response
+
+                    // Initialize arrays for dates and temperatures
+                    const dates = [];
+                    const temperatures = [];
+
+                    // Loop through the forecast data and extract required information
+                    data.list.forEach(item => {
+                        // Extract the date and temperature
+                        const date = new Date(item.dt * 1000).toLocaleDateString(); // Convert UNIX timestamp to date
+                        const temperature = item.main.temp; // Temperature in Celsius
+
+                        // Add data to the arrays for the chart (one data point per day)
+                        if (!dates.includes(date)) { // Add the date if it's not already in the array
+                            dates.push(date);
+                            temperatures.push(temperature);
+                        }
+                    });
+
+                    // Plot the bar chart using Chart.js
+                    const ctx = document.getElementById('temperatureChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: dates, // X-axis labels (dates)
+                            datasets: [{
+                                label: 'Temperature (°C)',
+                                data: temperatures, // Y-axis data (temperatures)
+                            }]
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching forecast data:', error);
+                    alert('Error fetching forecast data. Please check the city name or try again.');
+                }
+            }
+        </script>
+    </body>
+
+</html>

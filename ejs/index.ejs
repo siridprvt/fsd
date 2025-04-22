@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather Information</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+            }
+
+            th,
+            td {
+                padding: 8px;
+                text-align: left;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Weather Information for <%= weather.name %>
+        </h1>
+
+        <table>
+            <tr>
+                <th>City</th>
+                <td>
+                    <%= weather.name %>
+                </td>
+            </tr>
+            <tr>
+                <th>Temperature</th>
+                <td>
+                    <%= weather.main.temp %> °C
+                </td>
+            </tr>
+            <tr>
+                <th>Humidity</th>
+                <td>
+                    <%= weather.main.humidity %> %
+                </td>
+            </tr>
+            <tr>
+                <th>Weather</th>
+                <td>
+                    <%= weather.weather[0].description %>
+                </td>
+            </tr>
+            <tr>
+                <th>Wind Speed</th>
+                <td>
+                    <%= weather.wind.speed %> m/s
+                </td>
+            </tr>
+        </table>
+
+    </body>
+
+</html>
